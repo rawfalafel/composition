@@ -1,0 +1,58 @@
+{
+    "agents": [
+        "agent1",
+        "agent2"
+    ],
+    "workflow": [
+        {
+            "agent": "agent1",
+            "log": [
+                {
+                    "source": "agent",
+                    "message": "hello"
+                },
+                {
+                    "source": "user",
+                    "message": "world"
+                }
+            ],
+            "result": {
+                "write": {
+                    "path": "file1.txt",
+                    "content": "hello world"
+                },
+                "execute": {
+                    "command": "npm install"
+                },
+                "next": {
+                    "agent": "agent2"
+                }
+            }
+        },
+        {
+            "agent": "agent2",
+            "log": [
+                {
+                    "source": "agent",
+                    "message": "hello"
+                },
+                {
+                    "source": "user",
+                    "message": "world"
+                }
+            ],
+            "result": {
+                "write": {
+                    "path": "file2.txt",
+                    "content": "hello world"
+                },
+                "next": {
+                    "agent": "agent3"
+                }
+            }
+        },
+        {
+            "agent": "agent3"
+        }
+    ]
+}
