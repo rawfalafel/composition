@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { getWorkflowSWR } from '../services/backend';
+import { getWorkflowSWR, sendMessage } from '../services/backend';
 
 type LogMessage = {
   text: string;
@@ -26,12 +26,12 @@ const Chat: React.FC = () => {
     }
   }, [data]);
 
-  const handleSend = () => {
-    setMessages([...messages, { source: 'agent', message: { text: input } }]);
+  const handleSend = async () => {
+    sendMessage(input);
+    setMessages([...messages, { source: 'user', message: { text: input } }]);
+
     setInput('');
   };
-
-  console.log("messages", messages);
 
   return (
     <div className="flex flex-col items-center p-4">
