@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from enum import Enum
 from typing import List, Union, Literal
-from backend.agents import Agent
+from backend.agents import AgentType, Developer, ProductOwner
 
 class CodeChangeMessage(BaseModel):
     file_name: str
@@ -21,12 +21,12 @@ class LogMessage(BaseModel):
 
 
 class WorkflowStep(BaseModel):
-    agent: Agent
+    agent: AgentType
     log: List[LogMessage]
 
 
 class Composition(BaseModel):
-    agents: List[Agent]
+    agents: List[AgentType]
     workflow: List[WorkflowStep]
 
     def latest_step(self):
@@ -55,10 +55,19 @@ async def workflow():
     return current_composition_state()
 
 
+def _get_agent(agent_type: AgentType):
+    return {
+        AgentType.PRODUCT_OWNER: ProductOwner(),
+        AgentType.DEVELOPER: Developer()
+    }[agent_type]
+
+
 @app.post("/next")
 async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
     # Get current state
     current_state = current_composition_state()
+
+    agent = _get_agent(current_state.latest_step().agent)
 
     # Append to conversation
     current_state.latest_step().log.append(
@@ -68,8 +77,15 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
         )
     )
 
+    next_agent_message = agent.get_next_message(current_state)
+    current_state.latest_step().log.append(
+        LogMessage(
+            source="agent",
+            message=TextMessage(text=next_agent_message)
+        )
+    )
     with open("project.json", "w") as f:
-        f.write(current_state.model_dump())
+        f.write(current_state.model_dump_json())
 
     # Generate next action to take from the current agent
 
