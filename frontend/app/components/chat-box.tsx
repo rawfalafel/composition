@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useState } from 'react';
+import useSWR from 'swr';
+import { getWorkflow } from '../services/backend';
 
 type Message = {
   user: string;
@@ -10,6 +12,8 @@ type Message = {
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+
+  const { data, error } = useSWR("/workflow", getWorkflow);
 
   const handleSend = () => {
     setMessages([...messages, { user: 'User1', text: input }]);
