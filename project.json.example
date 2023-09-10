@@ -1,0 +1,19 @@
+{
+    "agents": [
+        "PRODUCT_OWNER",
+        "DEVELOPER"
+    ],
+    "workflow": [
+        {
+            "agent": "PRODUCT_OWNER",
+            "log": [
+                {
+                    "source": "agent",
+                    "message": {
+                        "text": "hello"
+                    }
+                }
+            ]
+        }
+    ]
+}
