@@ -59,6 +59,9 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
         )
     )
 
+    with open("project.json", "w") as f:
+        f.write(current_state.model_dump())
+
     # Generate next action to take from the current agent
 
 
