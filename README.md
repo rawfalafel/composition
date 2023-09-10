@@ -8,3 +8,9 @@
 ```
 $ poetry run uvicorn backend.main:app --reload
 ```
+
+# Starting Frontend
+
+```
+$ npm run dev
+```
