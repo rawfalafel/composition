@@ -1,10 +1,10 @@
-import Image from 'next/image'
+import React from 'react';
+import ChatBox from './components/chat-box';
 
 export default function Home() {
   return (
-    <div>
-      <input type="text" />
-      <button>Submit</button>
-    </div>
+    <React.Fragment>
+      <ChatBox /> 
+    </React.Fragment>
   )
 }
