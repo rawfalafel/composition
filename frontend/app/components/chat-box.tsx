@@ -1,11 +1,15 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getWorkflowSWR } from '../services/backend';
 
-type Message = {
-  user: string;
+type LogMessage = {
   text: string;
+};
+
+type Message = {
+  source: string;
+  message: LogMessage
 };
 
 const Chat: React.FC = () => {
@@ -13,21 +17,29 @@ const Chat: React.FC = () => {
   const [input, setInput] = useState('');
 
   const { data, error } = getWorkflowSWR()
-  console.log("data", data);
-  console.log("error", error);
+
+  useEffect(() => {
+    if (data) {
+      // TODO: Get the last completed step rather than the last step, which may be in progress
+      const lastStepIndex = data.workflow.length - 1;
+      setMessages(data.workflow[lastStepIndex].log);
+    }
+  }, [data]);
 
   const handleSend = () => {
-    setMessages([...messages, { user: 'User1', text: input }]);
+    setMessages([...messages, { source: 'agent', message: { text: input } }]);
     setInput('');
   };
+
+  console.log("messages", messages);
 
   return (
     <div className="flex flex-col items-center p-4">
       <div className="overflow-auto h-64 w-64 border rounded-lg p-4 mb-4">
         {messages.map((message, index) => (
           <div key={index} className="mb-2">
-            <strong>{message.user}: </strong>
-            <span>{message.text}</span>
+            <strong>{message.source}: </strong>
+            <span>{message.message.text}</span>
           </div>
         ))}
       </div>
