@@ -34,8 +34,8 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-4">
-      <div className="overflow-auto h-64 w-64 border rounded-lg p-4 mb-4">
+    <div className="flex flex-col h-full items-center p-4">
+      <div className="overflow-auto h-full w-1/2 border rounded-lg p-4 mb-4">
         {messages.map((message, index) => (
           <div key={index} className="mb-2">
             <strong>{message.source}: </strong>
