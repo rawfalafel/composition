@@ -69,18 +69,30 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
 
     agent = _get_agent(current_state.latest_step().agent)
 
-    # async def process_response():
-    #     response = await agent.stream_response(current_state)
+    # Append to conversation
+    current_state.latest_step().log.append(
+        LogMessage(
+            source="user",
+            message=user_message
+        )
+    )
 
-    #     current_state.latest_step().log.append(
-    #         LogMessage(
-    #             source="agent",
-    #             message=TextMessage(text=response)
-    #         )
-    #     )
+    async def process_response():
+        collected_messages = []
+        async for chunk in agent.stream_response(current_state):
+            collected_messages.append(chunk)
+            yield chunk;
 
-    #     with open("project.json", "w") as f:
-    #         f.write(current_state.model_dump_json())
+        response = ''.join(m for m in collected_messages)
+        current_state.latest_step().log.append(
+            LogMessage(
+                source="agent",
+                message=TextMessage(text=response)
+            )
+        )
+
+        with open("project.json", "w") as f:
+            f.write(current_state.model_dump_json())
 
         # Generate next action to take from the current agent
 
@@ -103,7 +115,8 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
         # {"" }
         # return response
 
-    return StreamingResponse(agent.stream_response(current_state), media_type="text/plain")
+    # return StreamingResponse(agent.stream_response(current_state), media_type="text/plain")
+    return StreamingResponse(process_response(), media_type="text/plain")
 
 
 @app.post("/approve")
