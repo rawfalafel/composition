@@ -49,6 +49,14 @@ const Chat: React.FC = () => {
     }
   };
 
+  const handleKeyPress = 
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        handleSend();
+      }
+    }
+  ;
+
   return (
     <div className="flex flex-col h-full items-center p-4">
       <div className="overflow-auto h-full w-1/2 border rounded-lg p-4 mb-4">
@@ -63,6 +71,7 @@ const Chat: React.FC = () => {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
           className="flex-grow rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white"
           placeholder="Write something..."
         />
