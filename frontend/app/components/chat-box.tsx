@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getWorkflowSWR, sendMessage } from '../services/backend';
 
 type LogMessage = {
@@ -27,11 +27,35 @@ const Chat: React.FC = () => {
   }, [data]);
 
   const handleSend = async () => {
-    sendMessage(input);
-    setMessages([...messages, { source: 'user', message: { text: input } }]);
-
+    const userInput = { source: 'user', message: { text: input } };
+    const agentInput = { source: 'agent', message: { text: '' } };
+    setMessages([...messages, userInput, agentInput]);
     setInput('');
+
+    const reader = await sendMessage(input);
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      setMessages(prevMessages => {
+        const lastMessage = prevMessages[prevMessages.length - 1];
+        lastMessage.message.text += new TextDecoder().decode(value);
+        return [...prevMessages];
+      });
+    }
   };
+
+  const handleKeyPress = 
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        handleSend();
+      }
+    }
+  ;
 
   return (
     <div className="flex flex-col h-full items-center p-4">
@@ -47,6 +71,7 @@ const Chat: React.FC = () => {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
           className="flex-grow rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white"
           placeholder="Write something..."
         />

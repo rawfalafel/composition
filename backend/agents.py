@@ -17,26 +17,28 @@ def _generate_chat_history():
 
 
 def contact_openai(chat_history) -> str:
-    completion = openai.ChatCompletion.create(
-        model="gpt-4", messages=chat_history
+    return openai.ChatCompletion.create(
+        model="gpt-4", messages=chat_history, stream=True
     )
-
-    return completion.choices[0].message.content
 
 
 class Agent(BaseModel, ABC):
-    def get_next_message(self, composition):
+    def stream_response(self, composition):
         raise NotImplementedError()
 
 
 class ProductOwner(Agent):
-    def get_next_message(self, composition):
+    async def stream_response(self, composition):
         last_message = composition.latest_step().log[-1]
         response = contact_openai([
             {"role": "user", "content": last_message.message.text}
         ])
-         
-        return response
+
+        for chunk in response:
+            delta = chunk['choices'][0]['delta']
+            if 'content' in delta:
+                yield(delta.content)
+
         
 
 class Developer(Agent):
