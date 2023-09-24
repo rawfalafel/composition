@@ -115,7 +115,6 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
         # {"" }
         # return response
 
-    # return StreamingResponse(agent.stream_response(current_state), media_type="text/plain")
     return StreamingResponse(process_response(), media_type="text/plain")
 
 

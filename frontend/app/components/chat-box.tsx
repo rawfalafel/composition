@@ -27,28 +27,25 @@ const Chat: React.FC = () => {
   }, [data]);
 
   const handleSend = async () => {
-    const userInput = { source: 'user', message: {text: input }};
-    const agentInput = {source: 'agent', message: {text: ''}};
-    const newMessages = [...messages, userInput, agentInput];
-    setMessages(newMessages);
+    const userInput = { source: 'user', message: { text: input } };
+    const agentInput = { source: 'agent', message: { text: '' } };
+    setMessages([...messages, userInput, agentInput]);
     setInput('');
 
     const reader = await sendMessage(input);
-    
-    if (reader) {
-      while (true) {
-        const { done, value } = await reader.read();
-        
-        if (done) {
-          break;
-        }
-        
-        setMessages(prevMessages => {
-          const lastMessage = prevMessages[prevMessages.length - 1];
-          lastMessage.message.text += new TextDecoder().decode(value);
-          return [...prevMessages];
-        });
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
       }
+
+      setMessages(prevMessages => {
+        const lastMessage = prevMessages[prevMessages.length - 1];
+        lastMessage.message.text += new TextDecoder().decode(value);
+        return [...prevMessages];
+      });
     }
   };
 
