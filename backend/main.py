@@ -76,15 +76,7 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
         )
     )
 
-    next_agent_message = agent.get_next_message(current_state)
-    current_state.latest_step().log.append(
-        LogMessage(
-            source="agent",
-            message=TextMessage(text=next_agent_message)
-        )
-    )
-    with open("project.json", "w") as f:
-        f.write(current_state.model_dump_json())
+    response = agent.stream_response(current_state)
 
     # Generate next action to take from the current agent
 
