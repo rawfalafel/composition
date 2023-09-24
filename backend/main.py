@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from enum import Enum
 from typing import List, Union, Literal
@@ -68,36 +69,41 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
 
     agent = _get_agent(current_state.latest_step().agent)
 
-    # Append to conversation
-    current_state.latest_step().log.append(
-        LogMessage(
-            source="user",
-            message=user_message
-        )
-    )
+    # async def process_response():
+    #     response = await agent.stream_response(current_state)
 
-    response = agent.stream_response(current_state)
+    #     current_state.latest_step().log.append(
+    #         LogMessage(
+    #             source="agent",
+    #             message=TextMessage(text=response)
+    #         )
+    #     )
 
-    # Generate next action to take from the current agent
+    #     with open("project.json", "w") as f:
+    #         f.write(current_state.model_dump_json())
 
-
-    # Save to disk
-    # Return current conversation
-
+        # Generate next action to take from the current agent
 
 
-    # Todo:
-        # 1. Load the current state from disk (maybe it should already
-    #        be in memory
-        # 2. Append the new message to the conversation
-        #     
-    # This accepts an "Update" json object, and updates the full state
-    # in memory & on disk.
+        # Save to disk
+        # Return current conversation
 
-    # {"data": " "}
 
-    # {"" }
-    return current_state
+
+        # Todo:
+            # 1. Load the current state from disk (maybe it should already
+        #        be in memory
+            # 2. Append the new message to the conversation
+            #     
+        # This accepts an "Update" json object, and updates the full state
+        # in memory & on disk.
+
+        # {"data": " "}
+
+        # {"" }
+        # return response
+
+    return StreamingResponse(agent.stream_response(current_state), media_type="text/plain")
 
 
 @app.post("/approve")

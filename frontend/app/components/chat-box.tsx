@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getWorkflowSWR, sendMessage } from '../services/backend';
 
 type LogMessage = {
@@ -27,10 +27,29 @@ const Chat: React.FC = () => {
   }, [data]);
 
   const handleSend = async () => {
-    sendMessage(input);
-    setMessages([...messages, { source: 'user', message: { text: input } }]);
-
+    const userInput = { source: 'user', message: {text: input }};
+    const agentInput = {source: 'agent', message: {text: ''}};
+    const newMessages = [...messages, userInput, agentInput];
+    setMessages(newMessages);
     setInput('');
+
+    const reader = await sendMessage(input);
+    
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          break;
+        }
+        
+        setMessages(prevMessages => {
+          const lastMessage = prevMessages[prevMessages.length - 1];
+          lastMessage.message.text += new TextDecoder().decode(value);
+          return [...prevMessages];
+        });
+      }
+    }
   };
 
   return (
