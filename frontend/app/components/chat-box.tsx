@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { getWorkflowSWR, sendMessage } from '../services/backend';
 
 type LogMessage = {
@@ -59,11 +60,11 @@ const Chat: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full items-center p-4">
-      <div className="overflow-auto h-full w-1/2 border rounded-lg p-4 mb-4">
+      <div className="overflow-auto h-full w-3/4 border rounded-lg p-4 mb-4">
         {messages.map((message, index) => (
           <div key={index} className="mb-2">
             <strong>{message.source}: </strong>
-            <span>{message.message.text}</span>
+            <ReactMarkdown children={message.message.text} />
           </div>
         ))}
       </div>

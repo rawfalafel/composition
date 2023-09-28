@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from enum import Enum
 from typing import List, Union, Literal
 from backend.agents import AgentType, Developer, ProductOwner
+from backend.watchfiles import list_files_in_directory, save_file_list
 
 class CodeChangeMessage(BaseModel):
     file_name: str
@@ -121,6 +122,18 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
 @app.post("/approve")
 def approve():
     pass
+
+# Example usage
+root_directory = '/Users/yutaro/code/orca-2'  # Replace this with the actual root directory path
+file_list = list_files_in_directory(root_directory)
+save_file_list(file_list, root_directory)
+
+# Print the list of files
+try:
+    for file_path in file_list:
+        print(file_path)
+except Exception as e:
+    print(f"An exception occurred: {e}")
 
 
 #
