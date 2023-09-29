@@ -3,9 +3,11 @@ import os
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 
+from backend.project import get_ignore_path, get_watchfiles_path
+
 def read_ignore_patterns(root_directory: str) -> PathSpec:
     """Read ignore patterns from .compositionignore file and return a PathSpec object."""
-    ignore_file_path = os.path.join(root_directory, '.compositionignore')
+    ignore_file_path = get_ignore_path(root_directory)
     
     # Fallback to an empty PathSpec object if any exception occurs
     try:
@@ -39,7 +41,7 @@ def list_files_in_directory(root_directory: str) -> List[str]:
 def save_file_list(file_list: List[str], root_directory: str) -> None:
     """Saves the list of files to a .composition/watchfiles file in the given root directory."""
     # Construct the full path to the watchfiles
-    watchfile_path = os.path.join(root_directory, '.composition', 'watchfiles')
+    watchfile_path = get_watchfiles_path(root_directory)
 
     # Ensure the .composition directory exists
     os.makedirs(os.path.dirname(watchfile_path), exist_ok=True)

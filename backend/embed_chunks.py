@@ -1,18 +1,12 @@
-from dotenv import load_dotenv
 import openai
-import os
 from typing import List, Tuple
 from langchain.docstore.document import Document
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-load_dotenv()
+from backend.openai import EMBEDDING_MODEL, setup_openai
 
-# Initialize OpenAI API
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-openai.api_key = OPENAI_API_KEY
+setup_openai()
 
-# Set model and batch size parameters
-EMBEDDING_MODEL = "text-embedding-ada-002"
 BATCH_SIZE = 1000
 
 @retry(wait=wait_random_exponential(multiplier=10), stop=stop_after_attempt(6))

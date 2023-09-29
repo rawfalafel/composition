@@ -1,36 +1,16 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from typing import List, Union, Literal
-from backend.agents import AgentType, Developer, ProductOwner
+from typing import Union
+from backend.agents import Developer, ProductOwner
+from backend.project import get_project_json_path
+from backend.project_types import AgentType, CodeChangeMessage, Composition, LogMessage, TextMessage
 
-class CodeChangeMessage(BaseModel):
-    file_name: str
-    old_code: str
-    new_code: str
-
-
-class TextMessage(BaseModel):
-    text: str
-
-
-class LogMessage(BaseModel):
-    source: Literal["user", "agent"]
-    message: Union[TextMessage, CodeChangeMessage]
-
-
-class WorkflowStep(BaseModel):
-    agent: AgentType
-    log: List[LogMessage]
-
-
-class Composition(BaseModel):
-    agents: List[AgentType]
-    workflow: List[WorkflowStep]
-
-    def latest_step(self):
-        return self.workflow[-1]
+load_dotenv()
+root_directory = os.getenv("ROOT_DIRECTORY")
+project_json_path = get_project_json_path(root_directory)
 
 
 app = FastAPI()
@@ -44,7 +24,7 @@ app.add_middleware(
 )
 
 def current_composition_state():
-    with open("project.json", "r") as f:
+    with open(project_json_path, "r") as f:
         content = f.read()
         return Composition.model_validate_json(content)
 
@@ -90,8 +70,8 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
             )
         )
 
-        with open("project.json", "w") as f:
-            f.write(current_state.model_dump_json())
+        with open(project_json_path, "w") as f:
+            f.write(current_state.model_dump_json(indent=4))
 
         # Generate next action to take from the current agent
 

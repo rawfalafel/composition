@@ -1,6 +1,8 @@
 from typing import List, Tuple, Union
 import os
 
+from backend.project import get_watchfiles_path
+
 def get_watchlist_paths(root_directory: str) -> List[str]:
     """
     Read the `.composition/watchfiles` and return a list of relative file paths.
@@ -14,7 +16,7 @@ def get_watchlist_paths(root_directory: str) -> List[str]:
     Raises:
         FileNotFoundError: Raised when `.composition/watchfiles` is not found.
     """
-    watchfile_path = os.path.join(root_directory, '.composition/watchfiles')
+    watchfile_path = get_watchfiles_path(root_directory)
     
     try:
         with open(watchfile_path, 'r') as f:

@@ -1,22 +1,19 @@
-import os
-from enum import Enum
 from abc import ABC
 from pydantic import BaseModel
-from dotenv import load_dotenv
 import openai
+from backend.agent_processing import convert_messages_format
 
-load_dotenv()
+from backend.openai import QUERY_MODEL, setup_openai
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-openai.api_key = OPENAI_API_KEY
+setup_openai()
 
 def _generate_chat_history():
     pass
 
 
-def contact_openai(chat_history) -> str:
+def contact_openai(messages) -> str:
     return openai.ChatCompletion.create(
-        model="gpt-4", messages=chat_history, stream=True
+        model=QUERY_MODEL, messages=messages, stream=True
     )
 
 
@@ -27,10 +24,8 @@ class Agent(BaseModel, ABC):
 
 class ProductOwner(Agent):
     async def stream_response(self, composition):
-        last_message = composition.latest_step().log[-1]
-        response = contact_openai([
-            {"role": "user", "content": last_message.message.text}
-        ])
+        messages = convert_messages_format(composition.latest_step().log)
+        response = contact_openai(messages)
 
         for chunk in response:
             delta = chunk['choices'][0]['delta']
@@ -42,7 +37,3 @@ class ProductOwner(Agent):
 class Developer(Agent):
     pass
 
-
-class AgentType(str, Enum):
-    PRODUCT_OWNER = "PRODUCT_OWNER"
-    DEVELOPER = "DEVELOPER"

@@ -3,6 +3,8 @@ from langchain.docstore.document import Document
 import csv
 import os
 
+from backend.project import COMPOSITION_DIRECTORY, EMBEDDINGS_CSV, get_embeddings_csv_path
+
 def write_to_csv(embedded_chunkfiles: List[Tuple[str, int, Document, List[float]]], root_directory: str) -> Union[None, Exception]:
     """
     Writes the list of tuples from `embed_chunks` to a CSV file.
@@ -16,7 +18,7 @@ def write_to_csv(embedded_chunkfiles: List[Tuple[str, int, Document, List[float]
     """
 
     # Build the file path
-    file_path = os.path.join(root_directory, '.composition', 'embeddings.csv')
+    file_path = get_embeddings_csv_path(root_directory)
 
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
