@@ -1,7 +1,11 @@
+from dotenv import load_dotenv
 import openai
 import os
 from typing import List, Tuple
 from langchain.docstore.document import Document
+from tenacity import retry, stop_after_attempt, wait_random_exponential
+
+load_dotenv()
 
 # Initialize OpenAI API
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -11,18 +15,20 @@ openai.api_key = OPENAI_API_KEY
 EMBEDDING_MODEL = "text-embedding-ada-002"
 BATCH_SIZE = 1000
 
+@retry(wait=wait_random_exponential(multiplier=10), stop=stop_after_attempt(6))
 def create_embedding_batch(batch: List[str]) -> List[List[float]]:
     try:
         response = openai.Embedding.create(model=EMBEDDING_MODEL, input=batch)
+        
+        if len(response["data"]) != len(batch):
+            print("Mismatch between number of embeddings and texts.")
+            return []
+        
+        return [e["embedding"] for e in response["data"]]
+
     except Exception as e:
         print(f"API error: {e}")
-        return []
-
-    if len(response["data"]) != len(batch):
-        print("Mismatch between number of embeddings and texts.")
-        return []
-    
-    return [e["embedding"] for e in response["data"]]
+        raise  # Re-raise the exception so that Tenacity knows to retry
 
 def embed_chunks(processed_chunkfiles: List[Tuple[str, int, Document]]) -> List[Tuple[str, int, Document, List[float]]]:
     """
