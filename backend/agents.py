@@ -10,7 +10,6 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
-print(OPENAI_API_KEY)
 
 def _generate_chat_history():
     pass

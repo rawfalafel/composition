@@ -1,3 +1,4 @@
+import hashlib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -5,6 +6,10 @@ from pydantic import BaseModel
 from enum import Enum
 from typing import List, Union, Literal
 from backend.agents import AgentType, Developer, ProductOwner
+from backend.csv import write_to_csv
+from backend.embed_chunks import embed_chunks
+from backend.read_files import read_from_watchlist
+from backend.chunk_files import process_chunkfiles
 from backend.watchfiles import list_files_in_directory, save_file_list
 
 class CodeChangeMessage(BaseModel):
@@ -124,17 +129,20 @@ def approve():
     pass
 
 # Example usage
-root_directory = '/Users/yutaro/code/orca-2'  # Replace this with the actual root directory path
-file_list = list_files_in_directory(root_directory)
-save_file_list(file_list, root_directory)
+root_directory = '/Users/yutaro/code/orca-2' 
+# file_data = read_from_watchlist(root_directory)
+# processed_files = process_chunkfiles(file_data)
 
-# Print the list of files
-try:
-    for file_path in file_list:
-        print(file_path)
-except Exception as e:
-    print(f"An exception occurred: {e}")
+# processed_chunks = embed_chunks(processed_files)
 
+# for path, index, _, embedding in processed_chunks:
+#     print(f"File: {path}")
+#     print(f"Chunk index: {index}")
+#     embedding_str = ''.join(str(x) for x in embedding)
+#     embedding_hash = hashlib.sha256(embedding_str.encode()).hexdigest()
+#     print(f"Embedding: {embedding_hash}")
+
+# write_to_csv(processed_chunks, "/Users/yutaro/code/orca-2")
 
 #
 # """
