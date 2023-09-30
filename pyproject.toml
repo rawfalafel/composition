@@ -19,7 +19,7 @@ scipy = "^1.11.3"
 mypy = "^1.5.1"
 
 [tool.poetry.scripts]
-sync-embeddings = "backend.update_embeddings:main"
+sync-embeddings = "backend.embedding.update_embeddings:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
