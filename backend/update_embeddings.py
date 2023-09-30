@@ -6,9 +6,17 @@ from backend.csv import write_to_csv
 from backend.read_files import read_from_watchlist
 from backend.watchfiles import list_files_in_directory
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate and update embeddings from a root directory.")
-    parser.add_argument("-d", "--dir", type=str, help="Root directory containing the .composition/watchfiles and where .composition/embeddings.csv will be saved.")
+    parser = argparse.ArgumentParser(
+        description="Generate and update embeddings from a root directory."
+    )
+    parser.add_argument(
+        "-d",
+        "--dir",
+        type=str,
+        help="Root directory containing the .composition/watchfiles and where .composition/embeddings.csv will be saved.",
+    )
 
     args = parser.parse_args()
     root_directory = args.dir
@@ -20,7 +28,7 @@ def main():
         # Step 1: Read files listed in watchlist
         print("Reading files listed in watchlist...")
         file_data = read_from_watchlist(watchlist, root_directory)
-        
+
         # Step 2: Process and chunk the files
         print("Processing and chunking files...")
         processed_files = process_chunkfiles(file_data)

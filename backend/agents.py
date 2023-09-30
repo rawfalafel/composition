@@ -7,6 +7,7 @@ from backend.openai import QUERY_MODEL, setup_openai
 
 setup_openai()
 
+
 def _generate_chat_history():
     pass
 
@@ -18,7 +19,7 @@ def contact_openai(messages) -> str:
 
 
 class Agent(BaseModel, ABC):
-    def stream_response(self, composition):
+    async def stream_response(self, composition):
         raise NotImplementedError()
 
 
@@ -28,12 +29,10 @@ class ProductOwner(Agent):
         response = contact_openai(messages)
 
         for chunk in response:
-            delta = chunk['choices'][0]['delta']
-            if 'content' in delta:
-                yield(delta.content)
+            delta = chunk["choices"][0]["delta"]
+            if "content" in delta:
+                yield (delta.content)
 
-        
 
 class Developer(Agent):
     pass
-
