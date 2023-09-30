@@ -71,9 +71,13 @@ def main():
     for question in aggregated_questions:
         (_, context) = retrieve_context(question, embeddings)
         score = evaluate_context(question, context)
-        aggregated_scores.append((question, context, score))
+        aggregated_scores.append(score)
 
         print(f"Question: {question}")
         for record in context:
             print(f"Context: {record.content[:100]}")
         print(f"Score: {score}")
+
+    score_sum = sum(aggregated_scores)
+    average_score = score_sum / len(aggregated_scores)
+    print(f"Average score: {average_score}")
