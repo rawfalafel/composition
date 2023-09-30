@@ -1,9 +1,9 @@
 from abc import ABC
 from pydantic import BaseModel
 import openai
-from backend.agent_processing import convert_messages_format
+from .agent_processing import convert_messages_format
 
-from backend.openai import QUERY_MODEL, setup_openai
+from backend.oai.setup import QUERY_MODEL, setup_openai
 
 setup_openai()
 

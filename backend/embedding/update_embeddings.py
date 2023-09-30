@@ -1,10 +1,10 @@
 import argparse
 
-from backend.embed_chunks import embed_chunks
-from backend.chunk_files import process_chunkfiles
-from backend.csv import write_to_csv
-from backend.read_files import read_from_watchlist
-from backend.watchfiles import list_files_in_directory
+from .embed_chunks import embed_chunks
+from .chunk_files import process_chunkfiles
+from .csv import write_to_csv
+from .read_files import read_from_watchlist
+from .watchfiles import list_files_in_directory
 
 
 def main():

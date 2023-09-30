@@ -3,9 +3,9 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from backend.agents import Developer, ProductOwner
+from backend.agent.agents import Developer, ProductOwner
 from backend.context_retrieval import retrieve_context
-from backend.csv import read_from_csv
+from backend.embedding.csv import read_from_csv
 from backend.project import get_project_json_path
 from backend.project_types import (
     AgentType,

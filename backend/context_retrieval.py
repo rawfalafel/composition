@@ -3,7 +3,7 @@ from scipy import spatial
 import openai
 
 from backend.embedding_types import EmbeddingRecord
-from backend.openai import EMBEDDING_MODEL, setup_openai
+from backend.oai.setup import EMBEDDING_MODEL, setup_openai
 
 setup_openai()
 

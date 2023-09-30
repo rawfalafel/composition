@@ -2,7 +2,7 @@ from typing import List, Tuple
 import openai
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 from backend.embedding_types import EmbeddingRecord
-from backend.openai import EMBEDDING_MODEL, setup_openai
+from backend.oai.setup import EMBEDDING_MODEL, setup_openai
 
 setup_openai()
 
