@@ -4,6 +4,7 @@ COMPOSITION_DIRECTORY = ".composition"
 PROJECT_JSON = "project.json"
 EMBEDDINGS_CSV = "embeddings.csv"
 WATCHFILES = "watchfiles"
+EVALS_DIRECTORY = "evals"
 
 
 def get_project_json_path(root_directory: str):
@@ -20,3 +21,7 @@ def get_watchfiles_path(root_directory: str):
 
 def get_ignore_path(root_directory: str):
     return os.path.join(root_directory, ".compositionignore")
+
+
+def get_evals_directory_path(root_directory: str):
+    return os.path.join(root_directory, COMPOSITION_DIRECTORY, EVALS_DIRECTORY)

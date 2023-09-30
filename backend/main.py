@@ -59,7 +59,7 @@ async def next_message(user_message: TextMessage):
 
     embeddings = read_from_csv(root_directory)
 
-    (_, context) = retrieve_context(user_message.text, embeddings, 1)
+    (_, context) = retrieve_context(user_message.text, embeddings)
 
     user_log_message = TextMessageWithContext(
         **user_message.model_dump(), context=context
