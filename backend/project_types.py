@@ -1,6 +1,8 @@
 from enum import Enum
-from typing import List, Literal, Union
+from typing import List, Literal
 from pydantic import BaseModel
+
+from backend.embedding_types import EmbeddingRecord
 
 
 class CodeChangeMessage(BaseModel):
@@ -13,16 +15,16 @@ class TextMessage(BaseModel):
     text: str
 
 
+class TextMessageWithContext(TextMessage):
+    context: List[EmbeddingRecord]
+
+
+Message = TextMessage | TextMessageWithContext | CodeChangeMessage
+
+
 class LogMessage(BaseModel):
     source: Literal["user", "agent"]
-    message: Union[TextMessage, CodeChangeMessage]
-
-
-def get_log_message_content(user_message: Union[TextMessage, CodeChangeMessage]):
-    if isinstance(user_message, TextMessage):
-        return user_message.text
-
-    raise Exception("Unknown message type")
+    message: Message
 
 
 class AgentType(str, Enum):
