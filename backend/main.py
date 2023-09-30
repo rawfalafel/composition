@@ -96,6 +96,15 @@ async def next_message(user_message: Union[TextMessage, CodeChangeMessage]):
 
     return StreamingResponse(process_response(), media_type="text/plain")
 
+@app.post("/reset_conversation")
+def reset_conversation():
+    # Get current state
+    current_state = current_composition_state()
+    current_state.latest_step().log = []    
+
+    with open(project_json_path, "w") as f:
+        f.write(current_state.model_dump_json(indent=4))
+
 
 @app.post("/approve")
 def approve():
